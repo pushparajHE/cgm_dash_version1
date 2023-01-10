@@ -6,8 +6,8 @@ import streamlit as st
 
     
 PAGES = {
-    "Metabolic Index": CGM_DASH,
-    "Cardiovascular Index":movement_dash}
+    "Metabolic Index": CGM_DASH}
+    #"Cardiovascular Index":movement_dash
 #st.snow()
 st.sidebar.image("HE_Word.png", width=300)
 st.sidebar.title('Navigation')
