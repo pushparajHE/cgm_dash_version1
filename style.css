@@ -1,0 +1,44 @@
+/
+body {
+    font-size: 18px;
+    padding: 55px;
+}
+
+h1 {
+    font-size: 38px;
+}
+
+h2 {
+    font-size: 28px;
+}
+
+h3 {
+    font-size: 24px;
+}
+
+h4 {
+    font-size: 20px;
+}
+
+table, th, td {
+    margin: auto;
+    text-align: center;
+    border: 1px solid;
+}
+
+table {
+    width: 80%;
+}
+
+.text-right {
+    text-align: right;
+}
+
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}

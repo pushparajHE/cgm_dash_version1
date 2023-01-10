@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  background-image: url('HE_BACK.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;  
+  background-size: cover;
+}
+th, td {
+  border: 3px solid black;
+  border-radius: 100px;
+  border-color: #12195A;
+}
+
+header {
+  background-image: url('HE_BACK.png' style="width:128px;height:128px;" );
+  padding: 5px;
+  text-align: center;
+  font-size: 25px;
+  color: #7B0202;
+}
+</style>
+</head>
+<body>
+<header>
+  <h2>HUMAN EDGE</h2>
+</header>
+<h2>Continuous Glucose Monitoring</h2>
+
+<p style="font-size:140%;"> FROM <b> {{ date1}} </b> TO <b> {{ date2}}</b> Total Days <b> {{ date3}}</b>  </p>
+
+<table style="width:50%">
+  <tr>
+  <tr style="height:80px">
+  
+    <th style="font-size:120%;"> Human Edge Score: <b> {{ CGM_index_Score}}</b> </th>
+  </tr>
+</table>
+
+<table style="width:100%">
+  <tr>
+  <tr style="height:80px">
+  
+    <th style="font-size:120%;"> American Diabetes Association-HbA1c: <b>{{ ADA_HbA1c }}</b> </th>
+    <th style="font-size:120%;"> Average Daily Risk Range:<b>{{ Adrr }}</b> </th> 
+    <th style="font-size:120%;"> Percent time inside range 70-150:<b>{{ pTIR }}</b> </th>
+  </tr>
+</table>
+
+<table style="width:100%">
+  <tr>
+  <tr style="height:80px">
+  
+    <th style="font-size:120%;"> Daily Average spike (&gt;110):<b> {{ Average_peaks_eachday }} </th>
+    <th style="font-size:120%;"> Average Max BG in spike:<b> {{ AvgMax_in_peak}}</b></th> 
+    <th style="font-size:120%;"> Average Time in spike:<b> {{ avgtinspike }}</b></th>
+  </tr>
+</table>
+
+<table style="width:100%">
+  <tr>
+  <tr style="height:80px">
+  
+    <th style="font-size:120%;"> Average time to Peak (Min):<b> {{ ATtoFloorfrom_Peak }}</b></th>
+    <th style="font-size:120%;"> Average time to floor (Min):<b> {{ ATtoTopfrom_base }}</b> </th> 
+    <th style="font-size:120%;"> Average BG:<b> {{ average_bg }}</b></th>
+  </tr>
+</table>
+
+
+
+
+</body>
+</html>
