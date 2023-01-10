@@ -4,7 +4,7 @@ import streamlit as st
 import altair as alt
 import cgmquantify as cgm
 import numpy as np
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
+
 names = ['Marcus','Manish']
 usernames = ['Marcus','Manish']
 passwords = ['Marcus@cgm','Manish@cgm']
