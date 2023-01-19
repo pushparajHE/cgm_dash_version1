@@ -408,7 +408,6 @@ def perform_analysis(glucose):
         
     
     import base64
-    from streamlit_option_menu import option_menu
     tabh, tabz, tabwk =st.tabs(["Glucose Analysis", "Group Pattern Analysis", "Day/Night Analysis", ])
     with tabh:
          
