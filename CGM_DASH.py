@@ -715,7 +715,7 @@ def perform_analysis(glucose):
             fig_crash.update_traces(marker_color='#191970')
             fig_crash.update_layout(title_text="Crashes in a Day", title_x=0, margin=dict(l=5, r=15, b=15, t=50))
             st.plotly_chart(fig_crash)
-            st.write(''' crashes of glucose reading less than 80 mg/dL.''')      
+            st.write(''' crashes of glucose reading less than 70 mg/dL.''')      
             
             
     with tab3:
