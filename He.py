@@ -22,4 +22,4 @@ page.app()
 
 
     
-set_background("HE_BACK.png")
+
