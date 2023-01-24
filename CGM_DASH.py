@@ -749,7 +749,7 @@ def perform_analysis(glucose):
         
         
     #st.info(f'Peaks Max BG Average : **{}**')
-    st.markdown("""---""")
+   
     
     
 
@@ -762,7 +762,7 @@ def perform_analysis(glucose):
     
 
     #fig=upper.groupby(upper['Actual time'].dt.date)['peak'].nunique().plot()
-    st.markdown("""---""")
+    
     #st.markdown("Glucose_readings throughout a day")
     #st.image("gcm_day.png", width=800)
     #fig = px.line(glucose,x="Actual time", y="Glucose reading", title="Blood Glucose Timeline")
