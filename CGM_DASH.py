@@ -210,7 +210,10 @@ def perform_analysis(glucose):
             'down_end_BG'
         , 'downslope_sample', 'Spike Time']
     stats_df = stats_df[cols]
-
+    
+    spike_data=stats_df[['Spike No', 'time_to_reach_top',
+            'Max Glucose', 'start_time', 'end_time']]
+    spike_data=spike_data.rename(columns={'time_to_reach_top': 'Time spent in spike'})
     # For Crashes
     glucose['lower'] = glucose['Glucose reading'] < 70
     glucose['L_previuos'] = glucose['lower'].shift(-1)
@@ -248,9 +251,8 @@ def perform_analysis(glucose):
 
     AvgMax_in_peakR=[181,180,150,140]
     average_bgR=[180,140,130,110]
-
-
-
+    
+    
 
     def get_score(range_val, val):
         for i in range(len(range_val)):
@@ -272,6 +274,8 @@ def perform_analysis(glucose):
     Average_peaks_eachday_Score = get_score(Average_peaks_eachdayR, Average_peaks_eachday)
     ATtoFloorfrom_PeakR_score = get_score(ATtoFloorfrom_PeakR, ATtoFloorfrom_Peak)
     average_time_spent_in_peaks_score = get_score(average_time_spent_in_peaksR, average_time_spent_in_peaks)
+    
+    
 
     average_bg_Score=get_score(average_bgR,average_bg)
 
@@ -374,6 +378,25 @@ def perform_analysis(glucose):
     night_averageG = round(glucose[glucose['day/night']=='night']['Glucose reading'].mean(), 2)
     day_averageG = round(glucose[glucose['day/night']=='day']['Glucose reading'].mean(), 2)
     
+    
+    #radar data----------------
+    def normalize(value, minimum, maximum):
+        return (value - minimum) / (maximum - minimum) * (5 - 0) + 0
+
+    
+    
+    peak_day_AVG=peak_day['Spikes'].mean()
+    spikeperday_score=normalize(peak_day_AVG,4,7)
+    
+    timespentspike=spike_data['Time spent in spike'].mean()
+    timeinspike_score=normalize(timespentspike,20,100)
+    
+    avg_glucose_score=normalize(avg_glucose,70,160)
+    day_glucose_score=normalize(day_averageG,70,160)
+    night_glucose_score=normalize(night_averageG, 70,160)
+    
+    
+    
     Labels= ['Very high (>161 mg/dL)', 'High(111-160 mg/dL)', 'Normal(70-110 mg/dL)', 'Low(60-70 mg/dL)', 'Very Low(<60 mg/dL)']
     sizes= [grop1, grop2, grop3, grop4, grop5]
     #explode = (0.4, 0, 0, 0, 0.4)
@@ -386,7 +409,7 @@ def perform_analysis(glucose):
                 'Normal(70-110 mg/dL)': "#49B55E",
                 'Very Low(<60 mg/dL)': "#6495ED",
                 'Low(60-70 mg/dL)': "#191970",
-                'High(111-160 mg/dL)': "#FF7F0E"})
+                'High(111-160 mg/dL)': "#FBAD5E"})
     figz.update_traces(textposition= 'inside', textinfo= 'percent+label', hole=.5)
     figz.update_layout(title_font_size = 42, autosize=False, width=500, height=500, margin=dict(l=10, r=10, t=20, b=5) )
     colpie.plotly_chart(figz)
@@ -462,7 +485,7 @@ def perform_analysis(glucose):
          fig_group = px.scatter(glucose, x="Actual time", y="Glucose reading", color="group_status", 
                      color_discrete_map={
                         'Very high (>161mg/dL)': "red",
-                        'High (111-160mg/dL)': "#FF7F0E",
+                        'High (111-160mg/dL)': "#FBAD5E",
                         'Normal (70-110mg/dL)': "#49B55E",
                         'Low (60-70mg/dL)': "#0D2A63",
                         'Very Low (<60mg/dL)': "skyblue"},
@@ -720,18 +743,18 @@ def perform_analysis(glucose):
         colorMR=[]    
         for h in stats_df['Max Glucose']:
             if h > 160:
-                colorMR.append('red')
+                colorMR.append('(>160mg/dL)')
             elif h > 140:
-                colorMR.append('orange')
+                colorMR.append('(140-160mg/dL)')
             else:
-                colorMR.append('green')    
-        figMR = px.bar(stats_df, x="Spike No", y="Max Glucose", text=stats_df['Time in spike (Min)'],hover_data=['start_time','end_time'])
+                colorMR.append('(<140mg/dL)')    
+        figMR = px.bar(spike_data, x="Spike No", y="Max Glucose",color= colorMR, text=spike_data['Time spent in spike'],hover_data=['start_time','end_time'])
         figMR.update_traces(textposition='outside')
         figMR.update_yaxes(title_text='Glucose value (mg/dL)')
         
         
             
-        figMR.update_layout(title_text="Maximum Glucose in spike", title_x=0, margin=dict(l=0, r=15, b=15, t=50))
+        figMR.update_layout(title_text="Maximum Glucose in spike", title_x=0, margin=dict(l=0, r=5, b=5, t=50))
         st.plotly_chart(figMR)
         
             
@@ -758,11 +781,8 @@ def perform_analysis(glucose):
 
     import pandas as pd
     df = pd.DataFrame(dict(
-        score=[Average_peaks_eachday_Score, TINR_score, average_time_spent_in_peaks_score
-             , ATtoFloorfrom_PeakR_score, AvgMax_in_peak_Score,average_bg_Score],
-        metric=['Daily Average spike (>110)',
-                'Percent time inside range 70-110', 'Average Time in spike', 'Average time to Peak',
-                'Average Maximum in each peak','Average Blood Glucose'
+        score=[ TINR_score, average_time_spent_in_peaks_score,spikeperday_score, avg_glucose_score, day_glucose_score, night_glucose_score],
+        metric=['Percent time inside range 70-110', 'Average Time in spike', 'spikes in a day score' ,'Highest glucose reading per day', 'day glucose reading score', 'night glucose reading score'
                 ]))
 
 
@@ -780,20 +800,7 @@ def perform_analysis(glucose):
 
     st.markdown("""---""")
 
-
-    
-    
-
-    
-    
-
-    #list of figures 
-
-
-    
-
-    #fig=upper.groupby(upper['Actual time'].dt.date)['peak'].nunique().plot()
-    
+ 
     #st.markdown("Glucose_readings throughout a day")
     #st.image("gcm_day.png", width=800)
     #fig = px.line(glucose,x="Actual time", y="Glucose reading", title="Blood Glucose Timeline")
