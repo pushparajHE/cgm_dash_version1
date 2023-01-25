@@ -423,17 +423,31 @@ def perform_analysis(glucose):
     with st.expander(" **Average glucose readings in range over time frame**"):
         pg1, pg2, pg3, pg4, pg5 = st.columns(5)
          
-        pg1.metric('Very High(>161)', valg1)
-        pg1.metric('Days in very high range', unique_very_high )
+        pg1.metric('Very High(>161mg/dL)', valg1)
+        pg1.markdown('''Number of days in 
+                     very high range''')
+        pg1.markdown(unique_very_high)
         
-        pg2.metric('High(111-160)', valg2)
-        pg2.metric('Days in high range', unique_high )
-        pg3.metric('Normal(70-110)', valg3)
-        pg3.metric('Days in normal range', unique_nor )
-        pg4.metric('Low(60-70)', valg4)
-        pg4.metric('Days in Low range', unique_low )
-        pg5.metric('Very Low(<60)', valg5 )
-        pg5.metric('Days in Low range', unique_very_low )
+        pg2.metric('High(111-160mg/dL)', valg2)
+        pg2.markdown('''Number of days in 
+                     high range''')
+        pg2.markdown(unique_high)
+        
+        pg3.metric('Normal(70-110mg/dL)', valg3)
+        pg3.markdown('''Number of days in 
+                     Normal range''')
+        pg3.markdown(unique_nor) 
+            
+        
+        pg4.metric('Low(60-70mg/dL)', valg4)
+        pg4.markdown('''Number of days in 
+                     low range''' )
+        pg4.markdown(unique_low)
+        
+        pg5.metric('Very Low(<60mg/dL)', valg5 )
+        pg5.markdown('''Number of days in 
+                     very low range''')
+        pg5.markdown(unique_very_low)
 
         st.write('Number of days spent with Hyperglycemia:', unique_hyper  )
         st.write('Number of days spent with Hypoglycemic:', unique_hypo )
@@ -454,6 +468,7 @@ def perform_analysis(glucose):
                         'Very Low (<60mg/dL)': "skyblue"},
                         title="CGM Group Analysis"
                         )
+         fig_group.update_yaxes(title_text='Glucose value (mg/dL)')
          st.write(fig_group, use_container_width=True )  
          
          chartC = alt.Chart(data= glucose, title = "Average at specific time point for 24 hours").mark_bar().encode(
@@ -586,6 +601,7 @@ def perform_analysis(glucose):
                       "high": "#FF7F0E"})
          fbox.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
                        plot_bgcolor = "rgba(0,0,0,0)")
+         fbox.update_yaxes(title_text='Glucose value (mg/dL)')
          st.write(fbox) 
          
          #candlestick chart 
@@ -626,6 +642,7 @@ def perform_analysis(glucose):
                       "high": "#FF7F0E"})
          fbox.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
                        plot_bgcolor = "rgba(0,0,0,0)")
+         fbox.update_yaxes(title_text='Glucose value (mg/dL)')
          st.write(fbox)
     
     
@@ -696,12 +713,30 @@ def perform_analysis(glucose):
         
             fig2 = px.line(max_BG_peak, x="Spike No", y="Max Glucose",hover_data={'Spike Time':True})
             fig2.update_traces(marker_color='#d40707')
+            fig2.update_yaxes(title_text='Glucose value (mg/dL)')
             fig2.update_layout(title_text="Maximum Glucose in spike", title_x=0, margin=dict(l=0, r=15, b=15, t=50))
             st.plotly_chart(fig2)
             
+        colorMR=[]    
+        for h in stats_df['Max Glucose']:
+            if h > 160:
+                colorMR.append('red')
+            elif h > 140:
+                colorMR.append('orange')
+            else:
+                colorMR.append('green')    
+        figMR = px.bar(stats_df, x="Spike No", y="Max Glucose", text=stats_df['Time in spike (Min)'],hover_data=['start_time','end_time'])
+        figMR.update_traces(textposition='outside')
+        figMR.update_yaxes(title_text='Glucose value (mg/dL)')
+        
+        
+            
+        figMR.update_layout(title_text="Maximum Glucose in spike", title_x=0, margin=dict(l=0, r=15, b=15, t=50))
+        st.plotly_chart(figMR)
+        
+            
             
     with tab3:
-        st.header("hes")
         ATTF, ATTTOP,AverageBG_DB = st.columns((1, 1, 1))
 
         ATTF.markdown('**Average time to Peak (Min)**')
@@ -723,10 +758,10 @@ def perform_analysis(glucose):
 
     import pandas as pd
     df = pd.DataFrame(dict(
-        score=[Average_peaks_eachday_Score, ADRR_score, TINR_score, average_time_spent_in_peaks_score
+        score=[Average_peaks_eachday_Score, TINR_score, average_time_spent_in_peaks_score
              , ATtoFloorfrom_PeakR_score, AvgMax_in_peak_Score,average_bg_Score],
-        metric=['Daily Average spike (>110)', 'Average Daily Risk Range',
-                'Percent time inside range 70-150', 'Average Time in spike', 'Average time to Peak',
+        metric=['Daily Average spike (>110)',
+                'Percent time inside range 70-110', 'Average Time in spike', 'Average time to Peak',
                 'Average Maximum in each peak','Average Blood Glucose'
                 ]))
 
@@ -749,7 +784,7 @@ def perform_analysis(glucose):
         
         
     #st.info(f'Peaks Max BG Average : **{}**')
-   
+    st.markdown("""---""")
     
     
 
@@ -762,7 +797,7 @@ def perform_analysis(glucose):
     
 
     #fig=upper.groupby(upper['Actual time'].dt.date)['peak'].nunique().plot()
-    
+    st.markdown("""---""")
     #st.markdown("Glucose_readings throughout a day")
     #st.image("gcm_day.png", width=800)
     #fig = px.line(glucose,x="Actual time", y="Glucose reading", title="Blood Glucose Timeline")
