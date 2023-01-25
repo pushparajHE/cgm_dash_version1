@@ -522,7 +522,7 @@ def perform_analysis(glucose):
          chart = (chartC + rule).properties(width=600)
          st.altair_chart(chart, theme="streamlit", use_container_width=True)
 
-         bar_rounded1 = alt.Chart(glucose, title='Average of Glucose reading by day ').mark_bar().encode(
+         bar_rounded1 = alt.Chart(glucose, title='Average of glucose reading by day ').mark_bar().encode(
                 x='monthdate(Day):O',
                 y='average(Glucose reading)'
                 ).properties(width=50)
@@ -616,7 +616,7 @@ def perform_analysis(glucose):
          gm3.metric("Percent time inside range 70-110mg/dL", pTIR )
          gm4.metric("Average time to Peak (Min)", ATtoFloorfrom_Peak )
          
-         gm2.metric("Average time to floor (Min)", ATtoTopfrom_base )
+         gm2.metric("Average time to baseline (Min)", ATtoTopfrom_base )
          gm3.metric("Average BG", average_bg)
          #gm1.markdown('**Glucose management index-HbA1c**')
          #gm1.subheader(GMI_HbA1c)
@@ -633,12 +633,12 @@ def perform_analysis(glucose):
         st.header("Spikes Average Calculation")
         pm1, pm2, pm3 = st.columns((1, 1, 1))
 
-        pm1.markdown('**Daily Average spike (>110)**')
+        pm1.markdown('**Average daily spikes (>110 mg/dL)**')
         pm1.subheader(Average_peaks_eachday)
 
         pm2.markdown('**Average Max BG in spike**')
         pm2.subheader(AvgMax_in_peak)
-        pm3.markdown('**Average Time in spike**')
+        pm3.markdown('**Average time in spike (min)**')
         pm3.subheader(avgtinspike)
 
         st.markdown("""---""")
@@ -768,6 +768,7 @@ def app():
     else:
         local_df = pd.read_csv('cricketer_data.csv')
         open_dash(local_df)
+
 
 
 
