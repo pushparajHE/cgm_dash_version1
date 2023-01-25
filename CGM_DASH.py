@@ -395,6 +395,24 @@ def perform_analysis(glucose):
     day_glucose_score=normalize(day_averageG,70,160)
     night_glucose_score=normalize(night_averageG, 70,160)
     
+    import pandas as pd
+    df = pd.DataFrame(dict(
+        score=[ TINR_score, average_time_spent_in_peaks_score,spikeperday_score, avg_glucose_score, day_glucose_score, night_glucose_score],
+        metric=['Percent time inside range 70-110', 'Average Time in spike', 'spikes in a day score' ,'Highest glucose reading per day', 'day glucose reading score', 'night glucose reading score'
+                ]))
+
+
+
+
+
+    #Redarfig = px.scatter(df, y='score', x='metric',  size_max=60)
+    Redarfig = px.line_polar(df, r='score', theta='metric', line_close=True)
+    
+
+    st.subheader("Metrices Score :")
+    #st.plotly_chart(Redarfig, use_container_width=True,theme="streamlit")
+    st.plotly_chart(Redarfig, use_container_width=True)
+    st.markdown("""---""")
     
     
     Labels= ['Very high (>161 mg/dL)', 'High(111-160 mg/dL)', 'Normal(70-110 mg/dL)', 'Low(60-70 mg/dL)', 'Very Low(<60 mg/dL)']
@@ -479,7 +497,7 @@ def perform_analysis(glucose):
     
     import base64
     
-    tabh, tabwk, tabz  =st.tabs(["Glucose Analysis",  "Day/Night Analysis","Group Pattern Analysis" ])
+    tabh, tabwk, tabz  =st.tabs(["Glucose Analysis",  "Day/Night Analysis","Group Pattern Data" ])
     with tabh:
          
          fig_group = px.scatter(glucose, x="Actual time", y="Glucose reading", color="group_status", 
@@ -514,50 +532,7 @@ def perform_analysis(glucose):
          chartd = (bar_rounded1).properties(width=600)      
          st.altair_chart(chartd, theme=None, use_container_width=True )
     with tabz:
-         
-
-         
-         #____________________________
-         scale = alt.Scale(
-         domain=['Very High (>161mg/dL)', 'High (111-160mg/dL)', 'Normal (70-110mg/dL)', 'Low (60-70mg/dL)', 'Very Low (<60mg/dL)'],
-         range=["#FF0000", "#FF8C00", "#098616", "#191970", "#6495ED"],)
-         color = alt.Color('group_status:N', scale=scale)     
-
-         #-------------------------INTERACTIVE CHART--------------
-        # interactive glucose reading analysis
-         base = alt.Chart(glucose).properties(width=900)
-         selection = alt.selection_multi(fields=['group_status'], bind='legend')
-         line = base.mark_line().encode(
-             x='Actual time',
-             y=alt.Y('Glucose reading', title='Glucose reading(mg/dL)'),
-             color=color,
-             strokeDash='group_status',
-             opacity=alt.condition(selection, alt.value(1), alt.value(0.2))
-         ).add_selection(selection)
-
-         rule = base.mark_rule().encode(
-             y='average(Glucose reading)',
-             color='group_status',
-             size=alt.value(2)
-         )
-
-         chart = line 
-
-         
-         selection1 = alt.selection_multi(fields=['group_status'])
-         chart2 = alt.Chart(glucose).mark_bar().encode(
-            x='count()',
-            y='group_status:N',
-            color=color,
-          ).add_selection(selection1)
-          
-
-          
-         chart4 = alt.vconcat(chart, chart2, data = glucose, title = "glucose reading analysis" )
-         st.altair_chart(chart4, theme= None, use_container_width= True)
-
-         
-
+        
          
          # table interactive
          gener_group = st.radio("Please select a range",('Very high (>161 mg/dL)', 'High (111 - 160 mg/dL)', 'Normal (70 - 110 mg/dL)', 'Low (60 - 70 mg/dL)', 'Very low (<70 mg/dL)'), horizontal=True) 
@@ -614,28 +589,7 @@ def perform_analysis(glucose):
                  
     with tabwk:
         
-          
-         fbox = px.violin(glucose, x= 'day/night', y= 'Glucose reading' , color= 'day/night', title=('Visualizing CGM Data: Day vs Night Violin Chart') ,box=True,
-                       color_discrete_map={
-                      "very_high": "red",
-                      "Normal": "#49B55E",
-                      "day": "#49B55E",
-                      "night": "#191970",
-                      "high": "#FF7F0E"})
-         fbox.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
-                       plot_bgcolor = "rgba(0,0,0,0)")
-         fbox.update_yaxes(title_text='Glucose value (mg/dL)')
-         st.write(fbox) 
-         
-         #candlestick chart 
-         
-
-         
-
-         
-    
-    
-    
+  
     #candlestick chart for glucose
          scale1 = alt.Scale(
          domain=['day','night'],
@@ -653,35 +607,17 @@ def perform_analysis(glucose):
                 ).properties(width=50)
               
          st.altair_chart(bar_rounded2 , theme=None, use_container_width=True ) 
-        
-         
+
     
-         fbox = px.box(glucose, x= 'group_status', y= 'Glucose reading' , color= 'day/night', title=('Day and Night Glucose Patterns: A Box Chart Comparison'),
-                       color_discrete_map={
-                      "very_high": "red",
-                      "Normal": "#49B55E",
-                      "day": "#49B55E",
-                      "night": "#191970",
-                      "high": "#FF7F0E"})
-         fbox.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
-                       plot_bgcolor = "rgba(0,0,0,0)")
-         fbox.update_yaxes(title_text='Glucose value (mg/dL)')
-         st.write(fbox)
-    
-    
-    
-         
-         
-    
-    
-    #tabs header
-    
-    tab1, tab2, tab3 = st.tabs(["HbA1", "Spike", "HE Score"])
+    tab1, tab2 = st.tabs(["HbA1", "Spike"])
     with tab1:
-         gm2, gm4  = st.columns((1, 1))
+         gm2, gm3, gm4  = st.columns((1, 1, 1))
          gm2.metric("American Diabetes Association-HbA1c", ADA_HbA1c )
-         gm4.metric("Percent time inside range 70-110mg/dL", pTIR )
+         gm3.metric("Percent time inside range 70-110mg/dL", pTIR )
+         gm4.metric("Average time to Peak (Min)", ATtoFloorfrom_Peak )
          
+         gm2.metric("Average time to floor (Min)", ATtoTopfrom_base )
+         gm3.metric("Average BG", average_bg)
          #gm1.markdown('**Glucose management index-HbA1c**')
          #gm1.subheader(GMI_HbA1c)
          #gm2.markdown('**American Diabetes Association-HbA1c**')
@@ -690,10 +626,11 @@ def perform_analysis(glucose):
          #gm3.subheader(Adrr)
          #gm4.markdown('**Percent time inside range 70-150**')
          #gm4.subheader(pTIR)
+         
                       
                      
     with tab2:
-        st.header("spikes average calculation")
+        st.header("Spikes Average Calculation")
         pm1, pm2, pm3 = st.columns((1, 1, 1))
 
         pm1.markdown('**Daily Average spike (>110)**')
@@ -720,9 +657,7 @@ def perform_analysis(glucose):
             fig1.update_traces(marker_color='#191970')
             fig1.update_layout(title_text="Spikes (>110 mg/dL) over time", title_x=0, margin=dict(l=5, r=15, b=15, t=50))
             st.plotly_chart(fig1)
-            st.write('''
-            The chart above shows some numbers.
-            It rolled actual dice for these, so they're guaranteed to  be random.''')
+            
             
         with st.expander("**Crashes (<70 mg/dL) over time**"):
             fig_crash = px.bar(crash_day, x='Date', y= 'crash')
@@ -731,23 +666,14 @@ def perform_analysis(glucose):
             st.plotly_chart(fig_crash)
             st.write(''' crashes of glucose reading less than 70 mg/dL.''')  
             
-        with st.expander(" **Maximum glucose reading per spike**"):
-            max_BG_peak = pd.merge(max_BG_peak, stats_df[['Spike No', 'Spike Time']], on='Spike No', how='inner')
-        
-            fig2 = px.line(max_BG_peak, x="Spike No", y="Max Glucose",hover_data={'Spike Time':True})
-            fig2.update_traces(marker_color='#d40707')
-            fig2.update_yaxes(title_text='Glucose value (mg/dL)')
-            fig2.update_layout(title_text="Maximum Glucose in spike", title_x=0, margin=dict(l=0, r=15, b=15, t=50))
-            st.plotly_chart(fig2)
-            
         colorMR=[]    
         for h in stats_df['Max Glucose']:
             if h > 160:
                 colorMR.append('(>160mg/dL)')
-            elif h > 140:
-                colorMR.append('(140-160mg/dL)')
+            elif h > 130:
+                colorMR.append('(130-160mg/dL)')
             else:
-                colorMR.append('(<140mg/dL)')    
+                colorMR.append('(<130mg/dL)')    
         figMR = px.bar(spike_data, x="Spike No", y="Max Glucose",color= colorMR, text=spike_data['Time spent in spike'],hover_data=['start_time','end_time'])
         figMR.update_traces(textposition='outside')
         figMR.update_yaxes(title_text='Glucose value (mg/dL)')
@@ -759,43 +685,13 @@ def perform_analysis(glucose):
         
             
             
-    with tab3:
-        ATTF, ATTTOP,AverageBG_DB = st.columns((1, 1, 1))
 
-        ATTF.markdown('**Average time to Peak (Min)**')
-        ATTF.subheader(ATtoFloorfrom_Peak)
-
-        ATTTOP.markdown('**Average time to floor (Min)**')
-        ATTTOP.subheader(ATtoTopfrom_base)
-
-        AverageBG_DB.markdown('**Average BG**')
-        AverageBG_DB.subheader(average_bg)
-    
-    
-    
-    
     
     
     
     
 
-    import pandas as pd
-    df = pd.DataFrame(dict(
-        score=[ TINR_score, average_time_spent_in_peaks_score,spikeperday_score, avg_glucose_score, day_glucose_score, night_glucose_score],
-        metric=['Percent time inside range 70-110', 'Average Time in spike', 'spikes in a day score' ,'Highest glucose reading per day', 'day glucose reading score', 'night glucose reading score'
-                ]))
-
-
-
-
-
-    #Redarfig = px.scatter(df, y='score', x='metric',  size_max=60)
-    Redarfig = px.line_polar(df, r='score', theta='metric', line_close=True)
-    st.markdown("""---""")
-
-    st.subheader("Metrices Score :")
-    #st.plotly_chart(Redarfig, use_container_width=True,theme="streamlit")
-    st.plotly_chart(Redarfig, use_container_width=True)
+    
     # Line chart ploting on dash board
 
     st.markdown("""---""")
@@ -872,7 +768,6 @@ def app():
     else:
         local_df = pd.read_csv('cricketer_data.csv')
         open_dash(local_df)
-
 
 
 
