@@ -337,12 +337,12 @@ def perform_analysis(glucose):
     #st.dataframe(data=glucose, width=1024, height=768)
     unique_very_high = glucose[glucose['group_status'] == 'Very high (>161mg/dL)']['Day'].nunique()
     unique_very_low = glucose[glucose['group_status'] == 'Very low (<70mg/dL)']['Day'].nunique()
-    unique_high = glucose[glucose['group_status'] == 'High (111-160mg/dL)']['Day'].nunique()
+    unique_high = (glucose[glucose['group_status'] == 'High (111-160mg/dL)']['Day'].nunique())-1
     unique_low = glucose[glucose['group_status'] == 'Low (60-70mg/dL)']['Day'].nunique()
     
     zy=[]
     for j in range(len(comp_glucose)):
-            if np.all(80<comp_glucose[j]<=130):
+            if np.all(70<comp_glucose[j]<=110):
                   zy.append('nor')
             else :
                 zy.append('hyp')
